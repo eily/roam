@@ -105,4 +105,48 @@ day.context='Work until 1–2pm · Hokusai and Shinjuku, then meet Chloe for the
 localStorage.setItem(tripKey,JSON.stringify(tripDays));
 if(activeDay==='2026-11-19')loadDay(activeDay);
 }
+
+/* Roam Tokyo · Thursday 19 November shopping-and-lunch update.
+   Merge by stable IDs so existing personal itinerary changes are retained. */
+(function(){
+ const key='2026-11-19', day=tripDays[key];
+ if(!day)return;
+ const additions=[
+ {id:'thu-mcdonalds',name:"McDonald's · lunch",desc:'Lunch near Kinshicho Station; choose the branch that suits your route',query:"McDonald's Kinshicho Station Tokyo",lat:35.6960,lng:139.8140},
+ {id:'thu-mascara',name:'White & purple mascara',desc:'Shop for niece; check beauty counters around Kinshicho Station (availability unconfirmed)',query:'cosmetics stores Kinshicho Station Tokyo',lat:35.6965,lng:139.8135},
+ {id:'thu-screenprotector',name:'Pixel 10 Pro screen protector',desc:'Priority: affordable protector specifically for Pixel 10 Pro; confirm model before paying',query:'phone accessories screen protector Kinshicho Station Tokyo',lat:35.6968,lng:139.8142},
+ {id:'thu-pharmacy',name:'Pharmacy · pain relief',desc:'Ask pharmacist about suitable pain relief; severe persistent rib/back pain needs medical assessment',query:'drugstore Kinshicho Station Tokyo',lat:35.6964,lng:139.8145}
+ ];
+ const existing=new Set(day.stops.map(x=>x.id));
+ const newStops=additions.filter(x=>!existing.has(x.id));
+ const firstAfterHotel=day.stops.findIndex(x=>x.id!=='hotel-kin');
+ day.stops.splice(firstAfterHotel<0?day.stops.length:firstAfterHotel,0,...newStops);
+ day.context='Lunch at McDonald’s, mascara for niece, Pixel 10 Pro screen protector and pharmacy near Kinshicho; then meet Chloe for Shinjuku light show';
+ const purchases=[['White mascara for niece',0],['Purple mascara for niece',0],['Pixel 10 Pro screen protector (exact fit)',0],['Pain relief — ask pharmacist',0]];
+ if(activeDay===key){
+   shopping=purchases;
+   checks=saved('roam-2026-11-19-shopping-checks',{});
+   renderShopping();
+   loadDay(key);
+ }
+ localStorage.setItem(tripKey,JSON.stringify(tripDays));
+ const oldRenderShopping=renderShopping;
+ renderShopping=function(){
+   oldRenderShopping();
+   if(activeDay!==key)return;
+   document.querySelectorAll('#shopping input[data-i]').forEach(e=>e.onchange=()=>{
+     checks[e.dataset.i]=e.checked;
+     localStorage.setItem('roam-2026-11-19-shopping-checks',JSON.stringify(checks));
+     renderShopping();
+   });
+   document.getElementById('total').textContent='Prices and stock to be checked in store · no fixed budget assumed';
+ };
+ const oldLoadDay=loadDay;
+ loadDay=function(k){
+   oldLoadDay(k);
+   if(k===key){shopping=purchases;checks=saved('roam-2026-11-19-shopping-checks',{});}
+   else {shopping=saved('roam-active-trip','shibuya')==='odaiba'?odaibaShopping:[['Montbell Fuji Graphic T',3300],['Uniqlo Ukiyo-e Black UT',1990],['Kai Shunsou Santoku 165mm',2660],['Kai Wakatake 120mm petty knife (optional)',2139]];checks=saved('roam-checks',{});}
+   renderShopping();
+ };
+})();
 </script></body></html>
