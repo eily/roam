@@ -149,4 +149,28 @@ if(activeDay==='2026-11-19')loadDay(activeDay);
    renderShopping();
  };
 })();
+
+/* Thursday low-walking westbound route: museum, Ochanomizu shrine, Chloe.
+   Update only the default day's known sightseeing stops; preserve errands and diary. */
+(function(){
+ const key='2026-11-19',day=tripDays[key];if(!day)return;
+ const oldIds=new Set(['thu-hokusai','thu-meiji','thu-shinjuku','thu-chloe','thu-bar','hotel-kin-return','thu-yushima','thu-kanda','thu-korakuen']);
+ const original=day.stops.filter(x=>!oldIds.has(x.id));
+ const route=[
+ {id:'thu-hokusai',name:'Sumida Hokusai Museum · must-see',desc:'Japanese ukiyo-e art; 40–60 min. From Moxy use short taxi/bus if walking hurts. Last admission usually 17:00; verify today.',query:'Sumida Hokusai Museum Tokyo',lat:35.6967,lng:139.8008},
+ {id:'thu-yushima',name:'Yushima Seidō · historic temple',desc:'Low-walking cultural stop, roughly 5 minutes from JR Ochanomizu. Optional if tired.',query:'Yushima Seido Tokyo',lat:35.7008,lng:139.7667},
+ {id:'thu-kanda',name:'Kanda Myojin Shrine · optional',desc:'Vermilion shrine near Yushima Seidō; some slopes, skip if pain or fatigue.',query:'Kanda Myojin Shrine Tokyo',lat:35.7020,lng:139.7677},
+ {id:'thu-korakuen',name:'Koishikawa Kōrakuen · optional garden',desc:'Extra walking and uneven paths; closes around 17:00. Skip if tired or short on time.',query:'Koishikawa Korakuen Garden Tokyo',lat:35.7054,lng:139.7492},
+ {id:'thu-chloe',name:'Meet Chloe · Tokyo Night & Light',desc:'Main goal! Tokyo Metropolitan Government Citizens Plaza; confirm showtime with Chloe. Short taxi from Shinjuku if needed.',query:'Tokyo Metropolitan Government Citizens Plaza Shinjuku',lat:35.6895,lng:139.6920},
+ {id:'thu-bar',name:'Optional drink · west Shinjuku',desc:'Only if feeling well; non-alcoholic option',query:'Nishishinjuku bars Tokyo',lat:35.6901,lng:139.6978},
+ {id:'hotel-kin-return',name:'Moxy Tokyo Kinshicho · return',desc:'Hotel after meeting Chloe',query:'Moxy Tokyo Kinshicho 3-4-2 Kotobashi Tokyo',lat:35.6931,lng:139.8153}
+ ];
+ // Existing errands (lunch, mascara, screen protector and pharmacy) stay ahead of museum.
+ const hotel=original.filter(x=>x.id==='hotel-kin');
+ const errands=original.filter(x=>x.id!=='hotel-kin');
+ day.stops=[...hotel,...errands,...route];
+ day.context='Low-walking westbound plan: McDonald’s and shopping near Kinshicho → Hokusai Museum (must-see) → JR Ochanomizu: Yushima Seidō and optional Kanda Myojin → optional Koishikawa garden → Shinjuku light show with Chloe. Skip optional stops if tired.';
+ localStorage.setItem(tripKey,JSON.stringify(tripDays));
+ if(activeDay===key)loadDay(key);
+})();
 </script></body></html>
