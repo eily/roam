@@ -191,4 +191,20 @@ if(activeDay==='2026-11-19')loadDay(activeDay);
  localStorage.setItem(key,'true');
  if(activeDay==='2026-11-20')loadDay(activeDay);
 })();
+
+(function(){
+ const key='roam-friday-hokusai-print-v1';
+ if(saved(key,false))return;
+ const day=tripDays['2026-11-20'];
+ if(!day)return;
+ const art={id:'fri-hokusai-shop',name:'Sumida Hokusai Museum shop · Japanese print',desc:'Look for a beautiful ukiyo-e reproduction, budget €10–20; museum shop visit, exhibition optional. Check print stock.',query:'Sumida Hokusai Museum Tokyo',lat:35.6967,lng:139.8008};
+ const old=day.stops.filter(x=>x.id!==art.id);
+ const shoe=old.findIndex(x=>x.id==='fri-shoes');
+ old.splice(shoe>=0?shoe:1,0,art);
+ day.stops=old;
+ day.context='Friday: Kameido Tenjin red bridges first, then Hokusai Museum shop for a €10–20 Japanese art reproduction, then On shoes at Arcakit. Screen protector, hair clip and souvenirs afterwards.';
+ localStorage.setItem(tripKey,JSON.stringify(tripDays));
+ localStorage.setItem(key,'true');
+ if(activeDay==='2026-11-20')loadDay(activeDay);
+})();
 </script></body></html>
